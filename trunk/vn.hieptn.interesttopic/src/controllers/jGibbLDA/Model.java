@@ -27,9 +27,11 @@
  */
 package controllers.jGibbLDA;;
 
+import com.nct.framework.util.DateTimeUtils;
 import config.ConfigInfo;
 import extentEntity.ClassifiedMessageEnt;
 import extentEntity.ClassifiedTopicEnt;
+import extentEntity.TrainTopicEnt;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -337,6 +339,7 @@ public class Model {
                             
                             DataBaseService.CreateClassifiedMessage(msgEnt);
                         }
+                        System.out.println("saveModelThetaDB:" + i );
                     }
                     
 		}
@@ -457,7 +460,7 @@ public class Model {
                             }//end foreach word
 
                             //print topic
-                            newTopic.TopicName = "Topic " + (k+1) + "th:\n";
+                            newTopic.TopicName = "Topic " + (k+1) + "\n";
                             Collections.sort(wordsProbsList);
                             for (int i = 0; i < twords; i++){
                                 if (data.localDict.contains((Integer)wordsProbsList.get(i).first)){
@@ -477,39 +480,99 @@ public class Model {
 		}
 		return true;
 	}
+        
+        public boolean saveModelTwordsTrainTopicDB(){
+		try{
+			if (twords > V){
+				twords = V;
+			}
+			
+                        for (int k = 0; k < K; k++){
+                            TrainTopicEnt newTopic = new TrainTopicEnt();			
+                            List<Pair> wordsProbsList = new ArrayList<Pair>(); 
+                            for (int w = 0; w < V; w++){
+                                    Pair p = new Pair(w, phi[k][w], false);
+
+                                    wordsProbsList.add(p);
+                            }//end foreach word
+
+                            //print topic
+                            newTopic.TopicName = "Topic " + (k+1) + "\n";
+                            newTopic.MainTopicId = ConfigInfo.MAIN_TOPICID_LDA;
+                            Collections.sort(wordsProbsList);
+                            for (int i = 0; i < twords; i++){
+                                if (data.localDict.contains((Integer)wordsProbsList.get(i).first)){
+                                    String word = data.localDict.getWord((Integer)wordsProbsList.get(i).first);
+                                    newTopic.Keyword += "#" + word + "|" + wordsProbsList.get(i).second;
+                                }
+                            }
+                            long tmpTopicId = DataBaseService.CreateTrainTopic(newTopic);
+                            
+			} //end foreach topic			
+			
+		}
+		catch(Exception e){
+			System.out.println("Error while saving model twords: " + e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 	/**
 	 * Save model
 	 */
 	public boolean saveModel(String modelName){
-		if (!saveModelTAssign(dir + File.separator + modelName + tassignSuffix)){
-			return false;
-		}
-		
-		if (!saveModelOthers(dir + File.separator + modelName + othersSuffix)){			
-			return false;
-		}
-		
-		if (twords > 0){
-                    if (!saveModelTwords(dir + File.separator + modelName + twordsSuffix))
-                            return false;
-                    if(!traindata){
-                        if (!saveModelTwordsDB())
-                            return false;
-                    }
-		}
-		
-		if (!saveModelTheta(dir + File.separator + modelName + thetaSuffix)){
-			return false;
-		}
+            System.out.println("B : saveModelTAssign :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
+            if (!saveModelTAssign(dir + File.separator + modelName + tassignSuffix)){
+                    return false;
+            }
+	    System.out.println("E : saveModelTAssign :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
+            
+            System.out.println("B : saveModelOthers :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
+            if (!saveModelOthers(dir + File.separator + modelName + othersSuffix)){			
+                    return false;
+            }
+	    System.out.println("E : saveModelOthers :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
+            
+            System.out.println("B : saveModelTwords :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
+            if (twords > 0){
+                if (!saveModelTwords(dir + File.separator + modelName + twordsSuffix))
+                        return false;
                 if(!traindata){
-                    if (!saveModelThetaDB()){
-			return false;
-		}
+                    System.out.println("B : saveModelTwordsDB :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss"));
+                    if (!saveModelTwordsDB())
+                        return false;
+                    System.out.println("E : saveModelTwordsDB :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss"));
+                }else{
+                    System.out.println("B : saveModelTwordsTrainTopicDB :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss"));
+                    if (!saveModelTwordsTrainTopicDB())
+                        return false;
+                    System.out.println("E : saveModelTwordsTrainTopicDB :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss"));
                 }
-		if (!saveModelPhi(dir + File.separator + modelName + phiSuffix)){
-			return false;
-		}
-		return true;
+            }
+	    System.out.println("E : saveModelTwords :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
+            
+            System.out.println("B : saveModelTheta :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
+            if (!saveModelTheta(dir + File.separator + modelName + thetaSuffix)){
+                    return false;
+            }
+            System.out.println("E : saveModelTheta :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
+
+            System.out.println("B : saveModelThetaDB :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
+            if(!traindata){
+                if (!saveModelThetaDB()){
+                    return false;
+                }
+            }
+            System.out.println("E : saveModelThetaDB :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
+
+            System.out.println("B : saveModelPhi :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
+            if (!saveModelPhi(dir + File.separator + modelName + phiSuffix)){
+                    return false;
+            }
+            System.out.println("E : saveModelPhi :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
+
+            return true;
 	}
 	
 	//---------------------------------------------------------------

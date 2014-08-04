@@ -34,6 +34,18 @@ public class FunctionUtils {
         return (str == null) || (str.length() == 0);
     }
     
+    public static int CountWord(String str) {
+        String trimmedText = str.trim();
+        int NumOfWords = trimmedText.isEmpty() ? 0 : trimmedText.split("\\s+").length;
+        return NumOfWords;
+    }
+    
+    public static int CountWordShow(String iWord, String iParagraph) {
+        int NumOfWords = StringUtils.countMatches(iParagraph, iWord);
+        return NumOfWords;
+    }
+    
+    
     public static String slug(String data) {
         //data = killUnicode(data).trim();
         if (data.length() > 0) {
@@ -65,15 +77,9 @@ public class FunctionUtils {
 
         return ConvertUtils.toString(sYear + sMonth + sDay);
     }
-    
     public static String ClearText(String inputText) {
         String regexSymbol = "[\\/\\[\\]|+@~!*@#$%^&?{}().,:;\\-=_\'\"<>]";
         
-        return inputText.replaceAll(regexSymbol, "");
-    }
-    
-    public static String ClearNumber(String inputText) {
-        String regexSymbol = "[0-9]";        
         return inputText.replaceAll(regexSymbol, "");
     }
     
@@ -85,11 +91,32 @@ public class FunctionUtils {
         return inputText.replaceAll(regexSymbol, "");
     }
     
+    public static String ClearWord1Char(String inputText) {
+//        passage = passage.replaceAll("\\b[\\w']{1,2}\\b", "");
+//    passage = passage.replaceAll("\\s{2,}", " ");
+        int minLength = 2;
+        String result = "";
+
+        String[] words = inputText.split("\\s+");
+
+        for (String word : words) {
+            if(word.length() >= minLength){
+                result += word + " ";
+            }
+        }       
+
+        return result;
+    }
+    
     public static String ClearStopWord(String inputText) {
         for(String tmpStopword : ConfigInfo.LIST_STOPWORD){
-            inputText = inputText.replaceAll("\\b"+tmpStopword+"\\b", "");
-    
+//            inputText = inputText.replaceAll("\\b"+tmpStopword+"\\b", "");
+            inputText = inputText.replaceAll("(?iu)\\b"+tmpStopword+"\\b", "");
+            inputText = inputText.replaceAll("\\b[^\\s]{1,1}\\b", ""); //Xóa Khoảng trắng dư
         }
+        
+//            inputText = inputText.replaceAll("[ ]{1,}", " "); //Xóa Từ 1 ký tự
+            inputText = inputText.replaceAll("[0-9]", ""); //Xóa Số
         return inputText;
     }
     
@@ -99,7 +126,7 @@ public class FunctionUtils {
         
         String newContent = twitterPostEnt.TweetContent;
         Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(twitterPostEnt.TweetContent);
+        Matcher matcher = pattern.matcher(twitterPostEnt.TweetContent.replaceAll("[()]", " "));
         String linkURL = "";
         if (matcher.find()) {
             String tmp = matcher.group();
@@ -136,6 +163,24 @@ public class FunctionUtils {
         return dataResult;
     }
     
+    public static List<String> ConvertListKeywordOfTopic(String topicKeyword) {
+        List<String> dataResult = new ArrayList<String>();
+        try {
+            String[] listKeyword = StringUtils.split(topicKeyword, "#");
+            if(listKeyword!=null && listKeyword.length>0){
+                for(String tmpKeyword : listKeyword){
+                    if(!tmpKeyword.isEmpty()){
+                        String[] listWord = StringUtils.split(tmpKeyword, "|");
+                        dataResult.add(listWord[0]);
+                    }
+                }
+            }
+        }catch (Exception ex){
+            
+        }
+        return dataResult;
+    }
+    
     public static List<String> ReadTextFileToList(String pathFileText) {
         List<String> dataResult = new ArrayList<String>();
         try {
@@ -145,7 +190,7 @@ public class FunctionUtils {
             while (line != null) {
                 StringBuilder sb = new StringBuilder();
                 sb.append(line);
-                dataResult.add(sb.toString());
+                dataResult.add(sb.toString().trim());
                 line = reader.readLine();
             }
             reader.close();

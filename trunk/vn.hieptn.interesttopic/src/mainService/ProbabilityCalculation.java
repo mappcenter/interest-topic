@@ -23,7 +23,7 @@ public class ProbabilityCalculation {
         return (Nk + 1)/(N + Vocabulary);
     }
     
-    public static double LogBase2(int iNumber) {
+    public static double LogBase2(double iNumber) {
         return Math.log10(iNumber)/Math.log10(2);
     }
 }

@@ -11,6 +11,7 @@ import com.nct.framework.common.Config;
 import com.nct.framework.util.ConvertUtils;
 import commonUtils.FunctionUtils;
 import extentEntity.ClassifiedTopicEnt;
+import extentEntity.TrainTopicEnt;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -38,6 +39,9 @@ public class ConfigInfo {
     public static String LOCATION_OUTPUT_FILE_DAT = "";
     public static List<Long> LIST_POSTID_LDA = new ArrayList<Long>();
     public static List<Long> LIST_TOPICID_LDA = new ArrayList<Long>();
+    public static long MAIN_TOPICID_LDA = 0;
     public static HashMap<String, ClassifiedTopicEnt> MAP_TOPIC_REPORT = new HashMap<String, ClassifiedTopicEnt>();
+    public static HashMap<String, TrainTopicEnt> MAP_TRAIN_TOPIC = new HashMap<String, TrainTopicEnt>();
+    public static long cmbMainTopicResult_ID = 0;
     public static HashMap<String, String> MAP_MAIN_TOPIC = new HashMap<String, String>();
 }

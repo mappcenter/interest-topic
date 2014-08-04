@@ -8,6 +8,7 @@ package vn.hieptn.interesttopic;
 
 import com.nct.framework.common.LogUtil;
 import com.nct.framework.util.ConvertUtils;
+import com.nct.framework.util.DateTimeUtils;
 import commonUtils.FunctionUtils;
 import config.ConfigInfo;
 import controllers.jGibbLDA.Estimator;
@@ -16,6 +17,7 @@ import controllers.jGibbLDA.LDACmdOption;
 import controllers.twitterCollection.CollectTwitterStatus;
 import extentEntity.ClassifiedTopicEnt;
 import extentEntity.MainTopicEnt;
+import extentEntity.TrainTopicEnt;
 import extentEntity.TwitterPostEnt;
 import extentEntity.TwitterPostListEnt;
 import java.awt.event.ActionEvent;
@@ -35,6 +37,7 @@ import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import mainService.DataBaseService;
 import mainService.InitService;
+import mainService.ProbabilityCalculation;
 import org.apache.commons.lang.StringUtils;
 import vn.hus.nlp.tokenizer.VietTokenizer;
 
@@ -139,6 +142,28 @@ public class InterestTopicMain extends javax.swing.JFrame {
         jPanel7 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        txtLDATrainAlpha = new javax.swing.JTextField();
+        txtLDATrainNiters = new javax.swing.JTextField();
+        jLabel22 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        txtLDATrainBeta = new javax.swing.JTextField();
+        txtLDATrainSaveStep = new javax.swing.JTextField();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        txtLDATrainNTopics = new javax.swing.JTextField();
+        txtLDATrainTWords = new javax.swing.JTextField();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        tableResultFindHideTopic = new javax.swing.JTable();
+        jScrollPane9 = new javax.swing.JScrollPane();
+        txtWordTopic = new javax.swing.JTextArea();
+        cmbMainTopicResult = new javax.swing.JComboBox();
+        cmbTrainTopic = new javax.swing.JComboBox();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        tableTrainTopicKeyword = new javax.swing.JTable();
         btnExit = new javax.swing.JButton();
         proressBarTwitterCollection = new javax.swing.JProgressBar();
 
@@ -218,7 +243,7 @@ public class InterestTopicMain extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(358, Short.MAX_VALUE)
+                .addContainerGap(511, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtNumCollected, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -413,7 +438,7 @@ public class InterestTopicMain extends javax.swing.JFrame {
                                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(txtLDAAlpha, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(txtLDANiters, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                .addGap(0, 35, Short.MAX_VALUE)))
+                                .addGap(0, 127, Short.MAX_VALUE)))
                         .addGap(18, 18, 18))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -434,31 +459,34 @@ public class InterestTopicMain extends javax.swing.JFrame {
                                     .addGroup(jPanel6Layout.createSequentialGroup()
                                         .addComponent(txtLDASaveStep, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(19, 19, 19)
-                                        .addComponent(jLabel13))))
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(txtCreateFileDatNum, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCreateFileDatTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(txtContent2Msg1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtContent2Msg1Total, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(txtMsg1ToMsg2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtMsg1ToMsg2Total, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel13)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel6Layout.createSequentialGroup()
+                                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                                .addComponent(txtMsg1ToMsg2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jLabel7))
+                                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                                .addComponent(txtCreateFileDatNum, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                    .addGroup(jPanel6Layout.createSequentialGroup()
+                                        .addComponent(txtContent2Msg1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel6)
+                                        .addGap(23, 23, 23)))
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtContent2Msg1Total, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtCreateFileDatTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtMsg1ToMsg2Total, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtLDANTopics, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addGap(0, 18, Short.MAX_VALUE)
-                                .addComponent(txtLDATWords, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(txtLDATWords, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtLDANTopics, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(25, 25, 25))
         );
@@ -609,7 +637,7 @@ public class InterestTopicMain extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel18)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE))
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -635,19 +663,100 @@ public class InterestTopicMain extends javax.swing.JFrame {
 
         tabTwitterCollection.addTab("Show Data", jPanel1);
 
-        jButton1.setText("jButton1");
+        jButton1.setText("File Huấn Luyện & Chạy LDA");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Cap Nhat WordMap");
+        jButton2.setText("Doc File Dac Trung Chu De");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
+
+        jButton3.setText("Gan Nhan Cho Chu De");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jLabel19.setText("Thông Số Chạy LDA Cho File Huấn Luyện");
+
+        jLabel20.setText("alpha");
+
+        jLabel21.setText("niters");
+
+        txtLDATrainAlpha.setText("0.5");
+
+        txtLDATrainNiters.setText("1000");
+
+        jLabel22.setText("beta");
+
+        jLabel23.setText("savestep");
+
+        txtLDATrainBeta.setText("0.1");
+
+        txtLDATrainSaveStep.setText("1000");
+
+        jLabel24.setText("nTopics");
+
+        jLabel25.setText("twords");
+
+        txtLDATrainNTopics.setText("10");
+
+        txtLDATrainTWords.setText("20");
+        txtLDATrainTWords.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtLDATrainTWordsActionPerformed(evt);
+            }
+        });
+
+        tableResultFindHideTopic.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane8.setViewportView(tableResultFindHideTopic);
+
+        txtWordTopic.setColumns(20);
+        txtWordTopic.setLineWrap(true);
+        txtWordTopic.setRows(5);
+        jScrollPane9.setViewportView(txtWordTopic);
+
+        cmbMainTopicResult.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbMainTopicResultActionPerformed(evt);
+            }
+        });
+
+        cmbTrainTopic.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbTrainTopicActionPerformed(evt);
+            }
+        });
+
+        tableTrainTopicKeyword.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane7.setViewportView(tableTrainTopicKeyword);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -655,19 +764,96 @@ public class InterestTopicMain extends javax.swing.JFrame {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addContainerGap(617, Short.MAX_VALUE))
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                        .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 712, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(10, 10, 10)
+                                .addComponent(txtLDATrainNiters, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtLDATrainAlpha, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(32, 32, 32)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel23, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtLDATrainSaveStep, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
+                            .addComponent(txtLDATrainBeta))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
+                            .addComponent(jLabel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtLDATrainNTopics)
+                            .addComponent(txtLDATrainTWords))
+                        .addGap(107, 107, 107))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel19)
+                                .addGap(127, 127, 127))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(cmbMainTopicResult, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cmbTrainTopic, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGap(107, 107, 107))))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
-                .addGap(85, 85, 85)
-                .addComponent(jButton2)
-                .addContainerGap(267, Short.MAX_VALUE))
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel19)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel20)
+                            .addComponent(txtLDATrainAlpha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel22)
+                            .addComponent(txtLDATrainBeta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel24)
+                            .addComponent(txtLDATrainNTopics, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel21)
+                            .addComponent(txtLDATrainNiters, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel23)
+                            .addComponent(txtLDATrainSaveStep, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel25)
+                            .addComponent(txtLDATrainTWords, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cmbTrainTopic, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbMainTopicResult, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(19, 19, 19))
         );
 
         tabTwitterCollection.addTab("Read Data", jPanel7);
@@ -883,7 +1069,7 @@ public class InterestTopicMain extends javax.swing.JFrame {
                 ConfigInfo.LIST_POSTID_LDA = new ArrayList<Long>();
                 for(TwitterPostEnt tmpPost : lstPost.listEnts){
                     if(tmpPost!=null){
-                        fileDate += tmpPost.Message2 + "\n";
+                        fileDate += FunctionUtils.ClearWord1Char(tmpPost.Message2) + "\n";
                         ConfigInfo.LIST_POSTID_LDA.add(tmpPost.PostId);
                         numCreated++;
                         txtCreateFileDatNum.setText(String.valueOf(numCreated));
@@ -937,9 +1123,13 @@ public class InterestTopicMain extends javax.swing.JFrame {
 //        inferencer.init(ldaOption);
        
         if (ldaOption.est || ldaOption.estc){
+            System.out.println(DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss"));
             Estimator estimator = new Estimator();
             estimator.init(ldaOption);
+            System.out.println(DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss"));
             estimator.estimate();
+            System.out.println(DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss"));
+            
         } else if (ldaOption.inf){
             Inferencer inferencer = new Inferencer();
             inferencer.init(ldaOption);
@@ -1035,7 +1225,7 @@ public class InterestTopicMain extends javax.swing.JFrame {
 
     private void cmboxTopicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmboxTopicActionPerformed
         // TODO add your handling code here:
-        if(cmboxTopic!=null && cmboxTopic.getSelectedItem().toString() != null){
+        if(cmboxTopic!=null && cmboxTopic.getSelectedItem()!= null){
             String selectedName = cmboxTopic.getSelectedItem().toString();
             ClassifiedTopicEnt tmpTopicEnt = ConfigInfo.MAP_TOPIC_REPORT.get(selectedName);
             if(tmpTopicEnt!=null){
@@ -1071,20 +1261,165 @@ public class InterestTopicMain extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cmboxTopicItemStateChanged
 
+    private void txtLDATrainTWordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLDATrainTWordsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtLDATrainTWordsActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+
+        List<MainTopicEnt> listMainTopic = DataBaseService.GetListMainTopicEnt();
+        List<ClassifiedTopicEnt> lstTopic = DataBaseService.GetListDataClassifiedTopic();
+        if(lstTopic!=null && lstTopic.size()>0 && listMainTopic!=null && listMainTopic.size()>0){
+            //Tinh So Vocalbulary
+            int numVocabulary = 0;
+            int numVocabularyWinDuplicate = 0;
+            for(MainTopicEnt tmpMainTopicEnt : listMainTopic){
+                numVocabulary += tmpMainTopicEnt.NumKeywordNoDuplicate;
+                numVocabularyWinDuplicate += tmpMainTopicEnt.NumKeyword;
+            }
+
+            //Tinh Xac Suat Cho Tung TOPIC
+            HashMap<String, Double> mapXSTopic = new HashMap<String, Double>();
+            for(ClassifiedTopicEnt tmpTopicEnt : lstTopic){
+                List<String> listKeywordOfTopic = FunctionUtils.ConvertListKeywordOfTopic(tmpTopicEnt.Keyword);
+                for(MainTopicEnt tmpMainTopicEnt : listMainTopic){
+                    int numN = 0;
+                    HashMap<String, Integer> mapNK = new HashMap<String, Integer>();
+
+                    for(String tmpKeywordTopic : listKeywordOfTopic){
+                        int nShowTime = FunctionUtils.CountWordShow(tmpKeywordTopic, tmpMainTopicEnt.Message2);
+                        numN += nShowTime;
+                        String KeyMapKeywordTopic = tmpKeywordTopic + "|" + tmpMainTopicEnt.TopicName;
+                        mapNK.put(KeyMapKeywordTopic, nShowTime);
+                    }
+
+                    //Tinh Xac Suat Cua Tung Key Word
+                    HashMap<String, Double> mapXSKeyword = new HashMap<String, Double>();
+                    for(String tmpKeywordTopic : listKeywordOfTopic){
+                        String KeyMapKeywordTopic = tmpKeywordTopic + "|" + tmpMainTopicEnt.TopicName;
+                        int numNK = mapNK.get(KeyMapKeywordTopic)>0 ? mapNK.get(KeyMapKeywordTopic) : 0;
+                        double XSKeyword = ((double)(numNK + 1))/((double)(numN + numVocabulary));
+                        mapXSKeyword.put(KeyMapKeywordTopic, XSKeyword);
+                    }
+
+                    //Xac Suat Cho Main Topic
+                    double pMainTopic = ((double)tmpMainTopicEnt.NumKeyword)/((double)numVocabularyWinDuplicate);
+
+                    //Xac Suat cho Topic voi Main Topic
+                    String KeyMapTopic = tmpTopicEnt.TopicName + "|" + tmpMainTopicEnt.TopicName;
+                    double pMainTopicSum = ProbabilityCalculation.LogBase2(pMainTopic);
+                    for(String tmpKeywordTopic : listKeywordOfTopic){
+                        String KeyMapKeywordTopic = tmpKeywordTopic + "|" + tmpMainTopicEnt.TopicName;
+                        double XSKeyword = mapXSKeyword.get(KeyMapKeywordTopic);
+                        pMainTopicSum += ProbabilityCalculation.LogBase2(XSKeyword);
+                    }
+                    mapXSTopic.put(KeyMapTopic, pMainTopicSum);
+                }
+            }
+
+            //Tim Chu De Chinh Cho Tung TOPIC
+            Vector<String> columnNamesMessage = new Vector<String>();
+            columnNamesMessage.add("Chu De An");
+            for(MainTopicEnt tmpMainTopicEnt : listMainTopic){
+                columnNamesMessage.add("XS "+tmpMainTopicEnt.TopicName);
+            }
+            columnNamesMessage.add("Chu De");
+
+            Vector<Vector<String>> dataMessage = new Vector<Vector<String>>();
+            for(ClassifiedTopicEnt tmpTopicEnt : lstTopic){
+                String topicNameFind = "";
+                double XSTopic = 0;
+                double XSTopicDuplicate = 0;
+                boolean isWaiting = false;
+                Vector<String> vstring = new Vector<String>();
+                vstring.add(tmpTopicEnt.TopicName);
+
+                for(MainTopicEnt tmpMainTopicEnt : listMainTopic){
+                    String KeyMapTopic = tmpTopicEnt.TopicName + "|" + tmpMainTopicEnt.TopicName;
+                    double tmpXSTopic = mapXSTopic.get(KeyMapTopic);
+                    if(XSTopic==0 || tmpXSTopic>XSTopic){
+                        XSTopic = tmpXSTopic;
+                        topicNameFind = KeyMapTopic;
+                    }
+                    if(XSTopicDuplicate==0 || tmpXSTopic==XSTopicDuplicate){
+                        XSTopicDuplicate = tmpXSTopic;
+                        isWaiting = true;
+                    }else{
+                        isWaiting = false;
+                    }
+                    vstring.add(String.format( "%.6f", tmpXSTopic));
+                }
+                String[] listWord = StringUtils.split(topicNameFind, "|");
+                if(isWaiting){
+                    vstring.add("Dang Cho Phan Lop");
+                }else{
+                    vstring.add(listWord[1]);
+                }
+                vstring.add("\n\n\n\n\n\n\n");
+                dataMessage.add(vstring);
+            }
+
+            tableResultFindHideTopic.setModel(new DefaultTableModel(dataMessage, columnNamesMessage));
+            jScrollPane8.setViewportView(tableResultFindHideTopic);
+            tableResultFindHideTopic.setVisible(true);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        List<MainTopicEnt> listMainTopic = DataBaseService.GetListMainTopicEnt();
+        DefaultComboBoxModel modelMainTopic = (DefaultComboBoxModel) cmbMainTopicResult.getModel();
+        modelMainTopic.removeAllElements();
+
+        if(listMainTopic!=null && listMainTopic.size()>0){
+            for(MainTopicEnt tmpMainTopicEnt : listMainTopic){
+                tmpMainTopicEnt.Keyword = "";
+                String fileWordmap = ConfigInfo.DIR_DATA_TRAIN + File.separator + tmpMainTopicEnt.TopicName + File.separator + "WordTopic.txt";
+                List<String> listWordmap = FunctionUtils.ReadTextFileToList(fileWordmap);
+                if(listWordmap!=null && listWordmap.size()>1){
+                    tmpMainTopicEnt.NumKeywordNoDuplicate = ConvertUtils.toInt(listWordmap.get(0));
+                    for(int i=1;i<listWordmap.size();i++){
+                        String tmpKeyword = listWordmap.get(i);
+                        String[] listWord = StringUtils.split(tmpKeyword, " ");
+                        if(!FunctionUtils.IsNullOrEmpty(listWord[0])){
+                            tmpMainTopicEnt.Keyword += listWord[0] + "|";
+                        }
+                    }
+                }
+
+                modelMainTopic.addElement(tmpMainTopicEnt.TopicName+": "+tmpMainTopicEnt.NumKeywordNoDuplicate+" Tu.");
+                //Update MainTopicEnt
+                DataBaseService.Update(tmpMainTopicEnt);
+                
+                List<TrainTopicEnt> lstTopic = DataBaseService.GetListTrainTopic(tmpMainTopicEnt.Id);
+                if(lstTopic!=null&&lstTopic.size()>0){
+                    for(TrainTopicEnt tmpTopic : lstTopic){
+                        if(tmpTopic!=null){
+                            ConfigInfo.MAP_TRAIN_TOPIC.put(tmpTopic.TopicName+"|"+tmpMainTopicEnt.Id, tmpTopic);
+                        }
+                    }
+                }
+            }
+        }
+        cmbMainTopicResult.setModel(modelMainTopic);
+        //Thong Bao Thanh Cong
+        JOptionPane.showMessageDialog(null, "Cập Nhật File WordTopic Thành Công!", "Read File WordTopic", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         //Lam Sach DB MainTopic
         DataBaseService.ClearDataMainTopic();
-        
+
         File file = new File(ConfigInfo.DIR_DATA_TRAIN);
         String[] directories = file.list(new FilenameFilter() {
-          @Override
-          public boolean accept(File current, String name) {
-            return new File(current, name).isDirectory();
-          }
+            @Override
+            public boolean accept(File current, String name) {
+                return new File(current, name).isDirectory();
+            }
         });
-        
-        
+
         for(String tmpFolder : directories){
             String filePath = ConfigInfo.DIR_DATA_TRAIN + File.separator + tmpFolder + File.separator + tmpFolder + ".txt";
             File tmpFile = new File(filePath);
@@ -1097,31 +1432,41 @@ public class InterestTopicMain extends javax.swing.JFrame {
                     //Lam Sach Du Lieu
                     newMainTopicEnt.Message1 = FunctionUtils.ClearTextUnicode(tmpFileContent);
                     newMainTopicEnt.Message1 = FunctionUtils.ClearStopWord(newMainTopicEnt.Message1);
-                    
-                    // Chay VietTokenizer 
+
+                    // Chay VietTokenizer
                     VietTokenizer tokenizer = new VietTokenizer();
                     String[] keyContent = tokenizer.tokenize(newMainTopicEnt.Message1);
                     newMainTopicEnt.Message2 = StringUtils.join(keyContent, " ");
 
                     //Tao File .dat
                     String fileDatPath = ConfigInfo.DIR_DATA_TRAIN + File.separator + tmpFolder + File.separator + tmpFolder + ".dat";
-                    if(!FunctionUtils.WriteTextFile(fileDatPath, newMainTopicEnt.Message2)){
+                    if(!FunctionUtils.WriteTextFile(fileDatPath, FunctionUtils.ClearWord1Char(newMainTopicEnt.Message2))){
                         JOptionPane.showMessageDialog(null, "Tạo File "+tmpFolder+".dat Khoong Thành Công!", "Tạo File .Dat", JOptionPane.INFORMATION_MESSAGE);
                     }
+                    newMainTopicEnt.NumKeyword = FunctionUtils.CountWord(newMainTopicEnt.Message2);
+
+                    //Luu vao DB
+                    long newMainTopicId = DataBaseService.Create(newMainTopicEnt);
+                    if(newMainTopicId>0){
+                        ConfigInfo.MAIN_TOPICID_LDA = newMainTopicId;
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Chay LDA File "+tmpFolder+".dat Khoong Thành Công!", "Chay LDA", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    
                     //Chay LDA
-                    LDACmdOption ldaOption = new LDACmdOption(); 
-                    ldaOption.inf = true; 
+                    LDACmdOption ldaOption = new LDACmdOption();
+                    ldaOption.inf = true;
                     ldaOption.est = true;
                     ldaOption.estc = false;
-                    ldaOption.dir = ConfigInfo.DIR_DATA_TRAIN + File.separator + tmpFolder; 
+                    ldaOption.dir = ConfigInfo.DIR_DATA_TRAIN + File.separator + tmpFolder;
                     ldaOption.dfile = tmpFolder + ".dat";
-                    ldaOption.modelName = ""; 
-                    ldaOption.alpha = ConvertUtils.toDouble(txtLDAAlpha.getText()) > 0 ? ConvertUtils.toDouble(txtLDAAlpha.getText()) : 0.5;
-                    ldaOption.beta = ConvertUtils.toDouble(txtLDABeta.getText()) > 0 ? ConvertUtils.toDouble(txtLDABeta.getText()) : 0.1;
-                    ldaOption.K = ConvertUtils.toInt(txtLDANTopics.getText()) > 0 ? ConvertUtils.toInt(txtLDANTopics.getText()) : 10;
-                    ldaOption.niters = ConvertUtils.toInt(txtLDANiters.getText()) > 0 ? ConvertUtils.toInt(txtLDANiters.getText()) : 1000;
-                    ldaOption.savestep = ConvertUtils.toInt(txtLDASaveStep.getText()) > 0 ? ConvertUtils.toInt(txtLDASaveStep.getText()) : 1000;
-                    ldaOption.twords = ConvertUtils.toInt(txtLDATWords.getText()) > 0 ? ConvertUtils.toInt(txtLDATWords.getText()) : 20;
+                    ldaOption.modelName = "";
+                    ldaOption.alpha = ConvertUtils.toDouble(txtLDATrainAlpha.getText()) > 0 ? ConvertUtils.toDouble(txtLDATrainAlpha.getText()) : 0.5;
+                    ldaOption.beta = ConvertUtils.toDouble(txtLDATrainBeta.getText()) > 0 ? ConvertUtils.toDouble(txtLDATrainBeta.getText()) : 0.1;
+                    ldaOption.K = ConvertUtils.toInt(txtLDATrainNTopics.getText()) > 0 ? ConvertUtils.toInt(txtLDATrainNTopics.getText()) : 10;
+                    ldaOption.niters = ConvertUtils.toInt(txtLDATrainNiters.getText()) > 0 ? ConvertUtils.toInt(txtLDATrainNiters.getText()) : 1000;
+                    ldaOption.savestep = ConvertUtils.toInt(txtLDATrainSaveStep.getText()) > 0 ? ConvertUtils.toInt(txtLDATrainSaveStep.getText()) : 1000;
+                    ldaOption.twords = ConvertUtils.toInt(txtLDATrainTWords.getText()) > 0 ? ConvertUtils.toInt(txtLDATrainTWords.getText()) : 20;
                     ldaOption.withrawdata = false;
                     ldaOption.traindata = true;
                     ldaOption.wordMapFileName = "wordmap.txt";
@@ -1129,47 +1474,74 @@ public class InterestTopicMain extends javax.swing.JFrame {
                     Estimator estimator = new Estimator();
                     estimator.init(ldaOption);
                     estimator.estimate();
-                   
-                    //Luu vao DB
-                    if(DataBaseService.Create(newMainTopicEnt)>0){
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Chay LDA File "+tmpFolder+".dat Khoong Thành Công!", "Chay LDA", JOptionPane.INFORMATION_MESSAGE);
-                    }
+
                     
+
                 }
             }
         }
-        
+
         //Thong Bao Thanh Cong
         JOptionPane.showMessageDialog(null, "Doc File Train Data Thành Công!", "Read Train Data", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void cmbMainTopicResultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbMainTopicResultActionPerformed
         // TODO add your handling code here:
-        List<MainTopicEnt> listMainTopic = DataBaseService.GetListMainTopicEnt();
-        if(listMainTopic!=null && listMainTopic.size()>0){
-            for(MainTopicEnt tmpMainTopicEnt : listMainTopic){
-                String fileWordmap = ConfigInfo.DIR_DATA_TRAIN + File.separator + tmpMainTopicEnt.TopicName + File.separator + "wordmap.txt";
-                List<String> listWordmap = FunctionUtils.ReadTextFileToList(fileWordmap);
-                if(listWordmap!=null && listWordmap.size()>1){
-                    tmpMainTopicEnt.NumKeyword = tmpMainTopicEnt.NumKeywordNoDuplicate = ConvertUtils.toInt(listWordmap.get(0));
-                    for(int i=1;i<listWordmap.size();i++){
-                        String tmpKeyword = listWordmap.get(i);
-                        String[] listWord = StringUtils.split(tmpKeyword, " ");
-                        if(!FunctionUtils.IsNullOrEmpty(listWord[0])){
-                            tmpMainTopicEnt.Keyword += listWord[0] + "|";
-                        }
+        if(cmbMainTopicResult!=null && cmbMainTopicResult.getSelectedItem() != null){
+            String selectedName = StringUtils.split(cmbMainTopicResult.getSelectedItem().toString(), ":")[0];
+            MainTopicEnt tmpMainTopicEnt = DataBaseService.GetMainTopicByName(selectedName);
+            if(tmpMainTopicEnt!=null && tmpMainTopicEnt.Keyword!=null){
+                txtWordTopic.setText(tmpMainTopicEnt.Keyword.replaceAll("\\|", " \n"));
+            }
+            
+            //Show Các Topic của Chủ đề này
+            ConfigInfo.cmbMainTopicResult_ID = tmpMainTopicEnt.Id;
+            DefaultComboBoxModel modelTopic = (DefaultComboBoxModel) cmbTrainTopic.getModel();
+            modelTopic.removeAllElements();
+            List<TrainTopicEnt> lstTopic = DataBaseService.GetListTrainTopic(tmpMainTopicEnt.Id);
+            if(lstTopic!=null&&lstTopic.size()>0){
+                for(TrainTopicEnt tmpTopic : lstTopic){
+                    if(tmpTopic!=null){
+                        modelTopic.addElement(tmpTopic.TopicName);
+                        ConfigInfo.MAP_TRAIN_TOPIC.put(tmpTopic.TopicName+"|"+tmpMainTopicEnt.Id, tmpTopic);
                     }
                 }
                 
-                //Update MainTopicEnt
-                DataBaseService.Update(tmpMainTopicEnt);
+                cmbTrainTopic.setModel(modelTopic);
+            }
+
+        }
+    }//GEN-LAST:event_cmbMainTopicResultActionPerformed
+
+    private void cmbTrainTopicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTrainTopicActionPerformed
+        // TODO add your handling code here:
+        if(cmbTrainTopic!=null && cmbTrainTopic.getSelectedItem()!= null){
+            String selectedName = cmbTrainTopic.getSelectedItem().toString();
+            TrainTopicEnt tmpTopicEnt = ConfigInfo.MAP_TRAIN_TOPIC.get(selectedName+"|"+ConfigInfo.cmbMainTopicResult_ID);
+            if(tmpTopicEnt!=null){
+                Vector<Vector<String>> dataMessage = new Vector<Vector<String>>();
+                String[] listKeyword = StringUtils.split(tmpTopicEnt.Keyword, "#");
+                if(listKeyword!=null && listKeyword.length>0){
+                    for(String tmpKeyword : listKeyword){
+                        if(!tmpKeyword.isEmpty()){
+                            String[] listWord = StringUtils.split(tmpKeyword, "|");
+                            Vector<String> vstring = new Vector<String>();
+                            vstring.add(listWord[0]);
+                            vstring.add(listWord[1]);
+                            vstring.add("\n\n\n\n\n\n\n");
+                            dataMessage.add(vstring);
+                        }
+                    }
+                }
+                Vector<String> columnNamesMessage = new Vector<String>();
+                columnNamesMessage.add("Word");
+                columnNamesMessage.add("Probability");
+                tableTrainTopicKeyword.setModel(new DefaultTableModel(dataMessage, columnNamesMessage));
+                jScrollPane7.setViewportView(tableTrainTopicKeyword);
+                tableTrainTopicKeyword.setVisible(true);
             }
         }
-        //Thong Bao Thanh Cong
-        JOptionPane.showMessageDialog(null, "Cap Nhat File Wordmap Thành Công!", "Read File Wordmap", JOptionPane.INFORMATION_MESSAGE);
-
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_cmbTrainTopicActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1208,9 +1580,12 @@ public class InterestTopicMain extends javax.swing.JFrame {
     private javax.swing.JButton btnRunLDA;
     private javax.swing.JButton btnTwitterCollectionStart;
     private javax.swing.JButton btnTwitterCollectionStop;
+    private javax.swing.JComboBox cmbMainTopicResult;
+    private javax.swing.JComboBox cmbTrainTopic;
     private javax.swing.JComboBox cmboxTopic;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1221,7 +1596,14 @@ public class InterestTopicMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1241,6 +1623,9 @@ public class InterestTopicMain extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JScrollPane jScrollPane8;
+    private javax.swing.JScrollPane jScrollPane9;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
     private javax.swing.JTextField jTextField1;
@@ -1249,7 +1634,9 @@ public class InterestTopicMain extends javax.swing.JFrame {
     private javax.swing.JTabbedPane tabTwitterCollection;
     private javax.swing.JTable tableKeyword;
     private javax.swing.JTable tableMessage;
+    private javax.swing.JTable tableResultFindHideTopic;
     private javax.swing.JTable tableTopic;
+    private javax.swing.JTable tableTrainTopicKeyword;
     private javax.swing.JTextField txtContent2Msg1;
     private javax.swing.JTextField txtContent2Msg1Total;
     private javax.swing.JTextField txtCreateFileDatNum;
@@ -1260,9 +1647,16 @@ public class InterestTopicMain extends javax.swing.JFrame {
     private javax.swing.JTextField txtLDANiters;
     private javax.swing.JTextField txtLDASaveStep;
     private javax.swing.JTextField txtLDATWords;
+    private javax.swing.JTextField txtLDATrainAlpha;
+    private javax.swing.JTextField txtLDATrainBeta;
+    private javax.swing.JTextField txtLDATrainNTopics;
+    private javax.swing.JTextField txtLDATrainNiters;
+    private javax.swing.JTextField txtLDATrainSaveStep;
+    private javax.swing.JTextField txtLDATrainTWords;
     private javax.swing.JTextField txtMsg1ToMsg2;
     private javax.swing.JTextField txtMsg1ToMsg2Total;
     public static javax.swing.JTextField txtNumCollected;
     public static javax.swing.JTextArea txtOutput;
+    private javax.swing.JTextArea txtWordTopic;
     // End of variables declaration//GEN-END:variables
 }
