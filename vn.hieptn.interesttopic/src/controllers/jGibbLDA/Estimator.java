@@ -28,6 +28,7 @@
 
 package controllers.jGibbLDA;
 
+import com.nct.framework.util.DateTimeUtils;
 import java.io.File;
 import java.util.Vector;
 
@@ -83,10 +84,14 @@ public class Estimator {
 		
 		System.out.println("Gibbs sampling completed!\n");
 		System.out.println("Saving the final model!\n");
+                System.out.println("B : computeTheta :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss"));            
 		computeTheta();
+                System.out.println("B : computePhi :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
 		computePhi();
+                System.out.println("B : saveModel :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
 		trnModel.liter--;
 		trnModel.saveModel("model-final");
+                System.out.println("E : saveModel :"+DateTimeUtils.getNow("dd/MM/yyyy HH:mm:ss")); 
 	}
 	
 	/**

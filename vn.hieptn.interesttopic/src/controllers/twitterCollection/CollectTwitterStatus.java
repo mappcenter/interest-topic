@@ -11,10 +11,6 @@ import com.nct.framework.util.StringUtils;
 import commonUtils.FunctionUtils;
 import config.ConfigInfo;
 import extentEntity.TwitterPostEnt;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import mainService.DataBaseService;
@@ -36,30 +32,30 @@ import vn.hieptn.interesttopic.InterestTopicMain;
 public class CollectTwitterStatus {
     private static final ConfigurationBuilder cb = new ConfigurationBuilder()
             .setDebugEnabled(true)
-            .setOAuthConsumerKey("vJCDWp1lYcTvWa6V02g")
-            .setOAuthConsumerSecret("0r7HrpoolKRfR7VFXFUEbYI9ELKz92VsC51ennugLy0")
-            .setOAuthAccessToken("2213868380-qRzsxFQdUavjqCzAtGcqqV45WLRbacsbYk5L2Gf")
-            .setOAuthAccessTokenSecret("tS3LedpAsq5mj3nifnokel7R3ymTbivknNpQ9sOTD6HGA");
+            .setOAuthConsumerKey("6TY4tDXSCl4v109Fb8saQ")
+            .setOAuthConsumerSecret("hRNPYAg0Fadje55DV58lxynVHNEokeXwPXibEf8h9k")
+            .setOAuthAccessToken("2213868380-0pTKSi5plfrWhDUc1nUafsE7PLmM00PlmCgzXQo")
+            .setOAuthAccessTokenSecret("w2wvVgMHrGCOdGMIXJgp7uoRPK8I9LB3SU5e2H3DaPijp");
     private static final TwitterStream twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
     private static FilterQuery fq = new FilterQuery();
-    private static final String keywords1[] = {"trúng cử","ứng cử","thăm","nói chuyện","hoạt động","đi","chất vấn","công du",
-            "tranh cử","tranh luận","trả lời","hỏi","quan hệ","tham nhũng","quyết định","chủ trương",
-        "sắc lệnh","bí thư","chủ tịch","nhân dân","chính quyền","đoàn","cờ","bóng","y tế","sức khỏe","cộng đồng",
-        "người","biểu diễn","nghệ thuật","cấm","thảo","nghị","khoa học","thuật","phủ","kiện","lệnh","thi hành","tòa","án",
-        "lãnh đạo","nhạc","hội","báo","công","tục","ngừa","thuốc","nhập","xuất","nghỉ","lịch","diễn","mừng","tham nhũng",
-        "đại","thể","ký","chiến","đấu","khai mạc","niệm","thành","mua bán","thành phố","nước","xã","huyện","tỉnh"
-        ,"việc","trình","bày","nội","ngoại","hình ảnh","máy","kỹ thuật","điện","hãng","nhà","lịch","bóng",
-        "bóng","sân","cờ","thi đấu","thời","thể","nhạc","viên","tính","trình","độ","chỉ","cầu","bằng","bằng cấp",
-        "nghĩa","đoàn","thông","thể","phục","sát","yêu","dục","viện","bệnh","trị","tướng","quân","đội","tìm","dạy","đạt",
-        "bình","luật","Nhật","ngừa","không","lĩnh","nghệ","thủ","hầm","bị","điều","chống","liêu","dựng","hóa","biên",
-        "địa","sử","lý","toán","trực","giáo","cô","cộng","trọng","an ninh","sát","đường","trời","huấn","luyện","đạo","khẩn","cảnh",
-        "trẻ","khấu","cấm","súng","lửa","khí","hạt","giới","đẹp","xấu","bình","tiến","giàu","văn","thi đấu","kết quả","xuất bản",
-        "cây","thủy","sự","cái","giành","dành","khoan","toàn","chuẩn","sống","chết","sâu","ngựa","thể thao","khám phá","quốc tế",
-        "chó","mèo","tây","chúng ta","chúng tôi","tôi","khuya","lỏng","chặt","vàng","sửa","thể dục","triển lãm","thời sự",
-        "án","hình","tranh","cúp","xếp","hạng","giường","cóc","trương","đại","tiểu","tổ","đêm","tường thuật",
-        "chơi","khách","sữa","chìm","mảnh","gần","răng","phẩu","họp","tuyển","sàn","vấn","kèm",
-        "phiên","khơi"
-        };
+//    private static final String keywords1[] = {"trúng cử","ứng cử","thăm","nói chuyện","hoạt động","đi","chất vấn","công du",
+//            "tranh cử","tranh luận","trả lời","hỏi","quan hệ","tham nhũng","quyết định","chủ trương",
+//        "sắc lệnh","bí thư","chủ tịch","nhân dân","chính quyền","đoàn","cờ","bóng","y tế","sức khỏe","cộng đồng",
+//        "người","biểu diễn","nghệ thuật","cấm","thảo","nghị","khoa học","thuật","phủ","kiện","lệnh","thi hành","tòa","án",
+//        "lãnh đạo","nhạc","hội","báo","công","tục","ngừa","thuốc","nhập","xuất","nghỉ","lịch","diễn","mừng","tham nhũng",
+//        "đại","thể","ký","chiến","đấu","khai mạc","niệm","thành","mua bán","thành phố","nước","xã","huyện","tỉnh"
+//        ,"việc","trình","bày","nội","ngoại","hình ảnh","máy","kỹ thuật","điện","hãng","nhà","lịch","bóng",
+//        "bóng","sân","cờ","thi đấu","thời","thể","nhạc","viên","tính","trình","độ","chỉ","cầu","bằng","bằng cấp",
+//        "nghĩa","đoàn","thông","thể","phục","sát","yêu","dục","viện","bệnh","trị","tướng","quân","đội","tìm","dạy","đạt",
+//        "bình","luật","Nhật","ngừa","không","lĩnh","nghệ","thủ","hầm","bị","điều","chống","liêu","dựng","hóa","biên",
+//        "địa","sử","lý","toán","trực","giáo","cô","cộng","trọng","an ninh","sát","đường","trời","huấn","luyện","đạo","khẩn","cảnh",
+//        "trẻ","khấu","cấm","súng","lửa","khí","hạt","giới","đẹp","xấu","bình","tiến","giàu","văn","thi đấu","kết quả","xuất bản",
+//        "cây","thủy","sự","cái","giành","dành","khoan","toàn","chuẩn","sống","chết","sâu","ngựa","thể thao","khám phá","quốc tế",
+//        "chó","mèo","tây","chúng ta","chúng tôi","tôi","khuya","lỏng","chặt","vàng","sửa","thể dục","triển lãm","thời sự",
+//        "án","hình","tranh","cúp","xếp","hạng","giường","cóc","trương","đại","tiểu","tổ","đêm","tường thuật",
+//        "chơi","khách","sữa","chìm","mảnh","gần","răng","phẩu","họp","tuyển","sàn","vấn","kèm",
+//        "phiên","khơi"
+//        };
         
     private static StatusListener listener = new StatusListener() {
 
